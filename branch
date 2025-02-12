@@ -1,0 +1,71 @@
+#!/bin/sh
+
+# Chek if current path is a git repo
+git rev-parse --is-inside-work-tree 1> /dev/null 2>&1
+if [ $? -ne 0 ]; then
+  echo "There is no git repository in the current path."
+  exit
+fi
+
+if [ -z "$1" ]; then
+  git branch
+  exit
+else
+  name=$1
+fi
+
+branch="$name"
+
+# From this point on we require gum
+if ! command -v gum 1>/dev/null; then
+  echo "gum is not installed. Install it from: https://github.com/charmbracelet/gum"
+  exit
+fi
+
+# check if input is an issue number
+if [ $name -eq $name 2>/dev/null ]; then
+  # check if we have the github cli available
+  if command -v gh 1>/dev/null; then 
+    repo=$(gum spin --title "fetching repo name... " --show-output -- \
+      gh repo view --json nameWithOwner -q ".nameWithOwner")
+    
+    # Confirm repo name
+    repo=$(gum input --prompt="repository: " --value=$repo)
+
+    slug=$(gum spin --title "fetching issue... " --show-output -- \
+      gh --repo "$repo" issue view "$name" --json title \
+      | jq -r .title \
+      | iconv -t ascii//IGNORE/TRANSLIT \
+      | sed -r 's/[^a-zA-Z0-9]+/-/g' \
+      | sed -r 's/^-+\|-+$//g' \
+      | tr A-Z a-z \
+      | head -c64)
+
+    if [ -z "$slug" ]; then
+      echo "Could not find issue $name in $repo"
+      exit
+    fi
+
+    branch=$(gum input --width=0 --prompt="proposed name: " --value="$name-$slug")
+  fi
+fi
+
+if [ -z $branch ]; then
+  echo "A branch name is required."
+  exit
+fi
+
+gum confirm "create branch $branch" || exit
+
+default_branch=$(gh repo view --json defaultBranchRef -q ".defaultBranchRef.name")
+base=$default_branch
+#base=$(gum input --prompt="base branch: " --value=$default_branch)
+#if [ -z $base ]; then
+#	 echo "A base branch is required."
+#  exit
+#fi
+
+# Should we fetch the base branch?
+# gum spin --title "fetching $base..." -- git fetch origin "$base"
+git branch "$branch" origin/"$base"
+git switch "$branch"
