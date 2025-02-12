@@ -2,11 +2,17 @@
 interactive bash script to create branches
 
 ## usage
-`branch` with no arguments will run `git branch` and return a list of branches in the repository.
+> `branch`
 
-`branch awesome-name` will create an `awesome-name` branch and switch to it.
+with no arguments will run `git branch` and return a list of branches in the repository.
 
-`branch issue-number` ie: `branch 123` will fetch the issue title and propose a name for the new branch based on it.
+> `branch awesome-name`
+
+will create an `awesome-name` branch and switch to it.
+
+> `branch issue-number`
+
+ie: `branch 123` will fetch the issue title and propose a name for the new branch based on it.
 
 ## requirements
 [https://github.com/charmbracelet/gum](https://github.com/charmbracelet/gum).
