@@ -16,9 +16,14 @@ fi
 
 branch="$name"
 
-# From this point on we require gum
+# From this point on we require gum and gh
 if ! command -v gum 1>/dev/null; then
   echo "gum is not installed. Install it from: https://github.com/charmbracelet/gum"
+  exit
+fi
+
+if ! command -v gh 1>/dev/null; then
+  echo "gh is not installed. Install it from: https://github.com/cli/cli"
   exit
 fi
 
