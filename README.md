@@ -18,7 +18,7 @@ ie: `branch 123` will fetch the issue title and propose a name for the new branc
 [https://github.com/charmbracelet/gum](https://github.com/charmbracelet/gum).
 
 ## install
-This will install `clean` in the `~/.local/bin` folder.
+This will install `branch` in the `~/.local/bin` folder.
 
 You can change the destination path passing `-o custom_path` to the command below.
 ```
